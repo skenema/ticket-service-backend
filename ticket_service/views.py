@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Tickets
-
+import datetime
 
 @api_view(['GET'])
 def get_ticket(request):
@@ -23,10 +23,11 @@ def get_ticket(request):
 def validate_ticket(request):
     if request.method == 'GET':
         ticket_id = request.query_params.get('ticketid')
-        print(ticket_id)
         try:
             user = Tickets.objects.get(id=ticket_id)
-            print(user)
+            current_time = datetime.datetime.now()
+            if current_time > user.showtime:
+                return Response({'Expired': 'You ticked isexpired'}, status=200)
             ticket = {
                 'id': user.id,
                 'title': user.title,

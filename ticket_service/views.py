@@ -24,17 +24,17 @@ def validate_ticket(request):
     if request.method == 'GET':
         ticket_id = request.query_params.get('ticketid')
         try:
-            user = Tickets.objects.get(id=ticket_id)
+            ticket = Tickets.objects.get(id=ticket_id)
             current_time = datetime.datetime.now()
             if current_time > user.showtime:
                 return Response({'Expired': 'You ticked isexpired'}, status=200)
             ticket = {
-                'id': user.id,
-                'title': user.title,
-                'seatNumber': user.seatNumber,
-                'cinema': user.cinema,
-                'showtime': user.showtime
+                'id': ticket.id,
+                'title': ticket.title,
+                'seatNumber': ticket.seatNumber,
+                'cinema': ticket.cinema,
+                'showtime': ticket.showtime
             }
         except Tickets.DoesNotExist:
-            return Response({'error': 'Ticket Invalid'}, status=404)
+            return Response({'Invalid': 'Ticket Invalid'}, status=404)
         return Response(data=ticket, status=200, content_type='application/json')

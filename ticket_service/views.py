@@ -28,8 +28,6 @@ def validate_ticket(request):
             ticket = Tickets.objects.get(id=ticket_id)
             current_time = datetime.datetime.now()
             ticket_time = datetime.datetime.strptime(ticket.showtime.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
-            print(current_time)
-            print(ticket_time)
             if current_time > ticket_time:
                 return Response({'Expired': 'You ticked isexpired'}, status=status.HTTP_200_OK)
             ticket = {

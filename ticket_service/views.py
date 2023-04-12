@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .models import Tickets
 import datetime
 
@@ -26,8 +27,11 @@ def validate_ticket(request):
         try:
             ticket = Tickets.objects.get(id=ticket_id)
             current_time = datetime.datetime.now()
-            if current_time > ticket.showtime:
-                return Response({'Expired': 'You ticked isexpired'}, status=403)
+            ticket_time = datetime.datetime.strptime(ticket.showtime.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+            print(current_time)
+            print(ticket_time)
+            if current_time > ticket_time:
+                return Response({'Expired': 'You ticked isexpired'}, status=status.HTTP_200_OK)
             ticket = {
                 'id': ticket.id,
                 'seatNumber': ticket.seatNumber,
@@ -35,5 +39,5 @@ def validate_ticket(request):
                 'showtime': ticket.showtime
             }
         except Tickets.DoesNotExist:
-            return Response({'Invalid': 'Ticket Invalid'}, status=404)
-        return Response(data=ticket, status=200)
+            return Response({'Invalid': 'Ticket Invalid'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(data=ticket, status=status.HTTP_200_OK)

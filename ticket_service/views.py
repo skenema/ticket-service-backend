@@ -36,5 +36,5 @@ def validate_ticket(request):
                 'showtime': user.showtime
             }
         except Tickets.DoesNotExist:
-            return Response({'error': 'User not found'}, status=404)
+            return Response({'error': 'Ticket Invalid'}, status=404)
         return Response(data=ticket, status=200, content_type='application/json')

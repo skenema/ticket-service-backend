@@ -17,7 +17,7 @@ def get_ticket(request):
                 'showtime': i.showtime
             }
             ticket_list.append(ticket)
-        return Response(data=ticket_list, status=200, content_type='application/json')
+        return Response(data=ticket_list, status=200)
 
 @api_view(['GET'])
 def validate_ticket(request):
@@ -36,4 +36,4 @@ def validate_ticket(request):
             }
         except Tickets.DoesNotExist:
             return Response({'Invalid': 'Ticket Invalid'}, status=404)
-        return Response(data=ticket, status=200, content_type='application/json')
+        return Response(data=ticket, status=200)

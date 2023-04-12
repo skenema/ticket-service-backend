@@ -28,6 +28,7 @@ def validate_ticket(request):
             current_time = datetime.datetime.now()
             if current_time > ticket.showtime:
                 return Response({'Expired': 'You ticked is expired.'}, status=200)
+
             ticket = {
                 'id': ticket.id,
                 'seatNumber': ticket.seatNumber,

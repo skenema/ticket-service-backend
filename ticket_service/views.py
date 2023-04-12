@@ -26,7 +26,7 @@ def validate_ticket(request):
         try:
             ticket = Tickets.objects.get(id=ticket_id)
             current_time = datetime.datetime.now()
-            if current_time > user.showtime:
+            if current_time > ticket.showtime:
                 return Response({'Expired': 'You ticked isexpired'}, status=200)
             ticket = {
                 'id': ticket.id,

@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Tickets
@@ -11,7 +12,6 @@ def get_ticket(request):
         for i in tickets:
             ticket = {
                 'id': i.id,
-                'title': i.title,
                 'seatNumber': i.seatNumber,
                 'cinema': i.cinema,
                 'showtime': i.showtime
@@ -30,7 +30,6 @@ def validate_ticket(request):
                 return Response({'Expired': 'You ticked isexpired'}, status=200)
             ticket = {
                 'id': ticket.id,
-                'title': ticket.title,
                 'seatNumber': ticket.seatNumber,
                 'cinema': ticket.cinema,
                 'showtime': ticket.showtime

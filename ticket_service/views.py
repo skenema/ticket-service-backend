@@ -17,7 +17,7 @@ def get_ticket(request):
                 'showtime': i.showtime
             }
             ticket_list.append(ticket)
-        return Response(data=ticket_list, status=200, content_type='application/json')
+        return Response(data=ticket_list, status=200)
 
 @api_view(['GET'])
 def validate_ticket(request):
@@ -27,7 +27,7 @@ def validate_ticket(request):
             ticket = Tickets.objects.get(id=ticket_id)
             current_time = datetime.datetime.now()
             if current_time > ticket.showtime:
-                return Response({'Expired': 'You ticked isexpired'}, status=200)
+                return Response({'Expired': 'You ticked is expired.'}, status=200)
             ticket = {
                 'id': ticket.id,
                 'seatNumber': ticket.seatNumber,
@@ -36,4 +36,4 @@ def validate_ticket(request):
             }
         except Tickets.DoesNotExist:
             return Response({'Invalid': 'Ticket Invalid'}, status=404)
-        return Response(data=ticket, status=200, content_type='application/json')
+        return Response(data=ticket, status=200)

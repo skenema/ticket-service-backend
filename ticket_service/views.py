@@ -24,10 +24,10 @@ def create_ticket(request):
             valdiate_url = '/'.join(prefix_url)
             data = {
                 "id": b.pk,
-                "seatNumber": b.seat_number,
+                "seat_number": b.seat_number,
                 "cinema": b.cinema,
                 "showtime": b.showtime,
-                "validate": valdiate_url
+                "validate_url": valdiate_url
             }
             return Response(data=data, status=status.HTTP_200_OK)
         except json.JSONDecodeError:

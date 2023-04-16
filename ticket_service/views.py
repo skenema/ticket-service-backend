@@ -15,12 +15,12 @@ def create_ticket(request):
         try:
             data = json.loads(request.body.decode())
             jsonschema.validate(data, ticket_schema)
-            b = Tickets(title=data['title'],seat_number=data['seat_number'], cinema=data['cinema'],
+            b = Tickets(title=data['title'], seat_number=data['seat_number'], cinema=data['cinema'],
                         showtime=data['showtime'])
             base_url = request.build_absolute_uri().split('/')
             prefix_url = base_url[:-1]
             b.save()
-            prefix_url.append(f'validate-ticket?ticketid={b.pk}')
+            prefix_url.append(f'validate-ticket?ticketId={b.pk}')
             valdiate_url = '/'.join(prefix_url)
             data = {
                 "id": b.pk,
@@ -34,6 +34,7 @@ def create_ticket(request):
             return Response({"error": "Invalid JSON format"}, status=status.HTTP_400_BAD_REQUEST)
         except jsonschema.exceptions.ValidationError as e:
             return Response({"error": e.message}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def get_ticket(request):
@@ -51,16 +52,21 @@ def get_ticket(request):
             ticket_list.append(ticket)
         return Response(data=ticket_list, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 def validate_ticket(request):
     if request.method == 'GET':
-        ticket_id = request.query_params.get('ticketid')
+        ticket_id = request.query_params.get('ticketId')
         try:
             ticket = Tickets.objects.get(id=ticket_id)
             current_time = datetime.datetime.now()
-            ticket_time = datetime.datetime.strptime(ticket.showtime.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+            ticket_time = datetime.datetime.strptime(
+                ticket.showtime.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
             if current_time > ticket_time:
-                return Response({'Expired': 'You ticked isexpired'}, status=status.HTTP_200_OK)
+                return Response({
+                    "message": "Ticket expired",
+                    "code": "ticket_expired"
+                }, status=status.HTTP_403_FORBIDDEN)
             ticket = {
                 'id': ticket.id,
                 'seatNumber': ticket.seatNumber,
@@ -68,15 +74,19 @@ def validate_ticket(request):
                 'showtime': ticket.showtime
             }
         except Tickets.DoesNotExist:
-            return Response({'Invalid': 'Ticket Invalid'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                "message": "Invalid ticket",
+                "code": "invalid_ticket"
+            }, status=status.HTTP_404_NOT_FOUND)
         return Response(data=ticket, status=status.HTTP_200_OK)
+
 
 @api_view(['DELETE'])
 def delete_ticket(request):
-    ticket_id = request.query_params.get('ticketid')
+    ticket_id = request.query_params.get('ticketId')
     try:
         ticket = Tickets.objects.get(id=ticket_id)
         ticket.delete()
         return Response(status=status.HTTP_200_OK)
     except Tickets.DoesNotExist:
-        return Response({'Invalid': 'NOt found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'Invalid': 'Not found'}, status=status.HTTP_404_NOT_FOUND)

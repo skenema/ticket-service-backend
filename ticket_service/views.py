@@ -13,9 +13,9 @@ def get_ticket(request):
         for i in tickets:
             ticket = {
                 'id': i.id,
-                'seatNumber': i.seatNumber,
+                'seatNumber': i.seat_id,
                 'cinema': i.cinema,
-                'showtime': i.showtime
+                'showtime': i.start_time
             }
             ticket_list.append(ticket)
         return Response(data=ticket_list, status=200)
@@ -27,14 +27,14 @@ def validate_ticket(request):
         try:
             ticket = Tickets.objects.get(id=ticket_id)
             current_time = datetime.datetime.now()
-            ticket_time = datetime.datetime.strptime(ticket.showtime.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+            ticket_time = datetime.datetime.strptime(ticket.start_time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
             if current_time > ticket_time:
                 return Response({'Expired': 'You ticked isexpired'}, status=status.HTTP_200_OK)
             ticket = {
                 'id': ticket.id,
-                'seatNumber': ticket.seatNumber,
+                'seatNumber': ticket.seat_id,
                 'cinema': ticket.cinema,
-                'showtime': ticket.showtime
+                'showtime': ticket.start_time
             }
         except Tickets.DoesNotExist:
             return Response({'Invalid': 'Ticket Invalid'}, status=status.HTTP_404_NOT_FOUND)

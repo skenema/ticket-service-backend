@@ -7,17 +7,24 @@ import datetime
 from django.core import serializers
 import json
 
+
 @api_view(['POST'])
 def create_ticket(request):
     if request.method == "POST":
-        b = Tickets(seatNumber="test", cinema="test", showtime=datetime.datetime.now())
+        b = Tickets(seatNumber="test", cinema="test",
+                    showtime=datetime.datetime.now())
+        base_url = request.build_absolute_uri().split('/')
+        prefix_url = base_url[:-1]
         b.save()
+        prefix_url.append(f'validate-ticket?ticketid={b.pk}')
+        valdiate_url = '/'.join(prefix_url)
+        print(valdiate_url)
         data = {
             "id": b.pk,
             "seatNumber": b.seatNumber,
             "cinema": b.cinema,
             "showtime": b.showtime,
-            "validate": "test"
+            "validate": valdiate_url
         }
         return Response(data=data, status=status.HTTP_200_OK)
 
@@ -56,7 +63,6 @@ def validate_ticket(request):
             return Response({'Invalid': 'Ticket Invalid'}, status=status.HTTP_404_NOT_FOUND)
         return Response(data=ticket, status=status.HTTP_200_OK)
 
-# for develop
 @api_view(['DELETE'])
 def delete_ticket(request):
     ticket_id = request.query_params.get('ticketid')

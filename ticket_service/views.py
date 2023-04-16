@@ -1,32 +1,40 @@
 from django.shortcuts import render
+import jsonschema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Tickets
 import datetime
-from django.core import serializers
+from .schema import ticket_schema
 import json
 
 
 @api_view(['POST'])
 def create_ticket(request):
     if request.method == "POST":
-        b = Tickets(seatNumber="test", cinema="test",
-                    showtime=datetime.datetime.now())
-        base_url = request.build_absolute_uri().split('/')
-        prefix_url = base_url[:-1]
-        b.save()
-        prefix_url.append(f'validate-ticket?ticketid={b.pk}')
-        valdiate_url = '/'.join(prefix_url)
-        print(valdiate_url)
-        data = {
-            "id": b.pk,
-            "seatNumber": b.seatNumber,
-            "cinema": b.cinema,
-            "showtime": b.showtime,
-            "validate": valdiate_url
-        }
-        return Response(data=data, status=status.HTTP_200_OK)
+        try:
+            data = json.loads(request.body.decode())
+            jsonschema.validate(data, ticket_schema)
+            b = Tickets(seatNumber="test", cinema="test",
+                        showtime=datetime.datetime.now())
+            base_url = request.build_absolute_uri().split('/')
+            prefix_url = base_url[:-1]
+            b.save()
+            prefix_url.append(f'validate-ticket?ticketid={b.pk}')
+            valdiate_url = '/'.join(prefix_url)
+            print(valdiate_url)
+            data = {
+                "id": b.pk,
+                "seatNumber": b.seatNumber,
+                "cinema": b.cinema,
+                "showtime": b.showtime,
+                "validate": valdiate_url
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+        except json.JSONDecodeError:
+            return Response({"error": "Invalid JSON format"}, status=status.HTTP_400_BAD_REQUEST)
+        except jsonschema.exceptions.ValidationError as e:
+            return Response({"error": e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def get_ticket(request):

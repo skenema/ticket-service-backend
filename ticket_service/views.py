@@ -15,17 +15,16 @@ def create_ticket(request):
         try:
             data = json.loads(request.body.decode())
             jsonschema.validate(data, ticket_schema)
-            b = Tickets(seatNumber="test", cinema="test",
-                        showtime=datetime.datetime.now())
+            b = Tickets(title=data['title'],seat_number=data['seat_number'], cinema=data['cinema'],
+                        showtime=data['showtime'])
             base_url = request.build_absolute_uri().split('/')
             prefix_url = base_url[:-1]
             b.save()
             prefix_url.append(f'validate-ticket?ticketid={b.pk}')
             valdiate_url = '/'.join(prefix_url)
-            print(valdiate_url)
             data = {
                 "id": b.pk,
-                "seatNumber": b.seatNumber,
+                "seatNumber": b.seat_number,
                 "cinema": b.cinema,
                 "showtime": b.showtime,
                 "validate": valdiate_url
@@ -44,7 +43,8 @@ def get_ticket(request):
         for i in tickets:
             ticket = {
                 'id': i.id,
-                'seatNumber': i.seatNumber,
+                'title': i.title,
+                'seat_number': i.seat_number,
                 'cinema': i.cinema,
                 'showtime': i.showtime
             }

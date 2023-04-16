@@ -1,10 +1,11 @@
 ticket_schema = {
     "type": "object",
     "properties": {
-        "seatNumbers" : {"type": "string"}, 
+        "title" : {"type": "string"},
+        "seat_number" : {"type": "integer"}, 
         "cinema" : {"type": "string"}, 
         "showtime" : {"type": "string"}
     },
-    "required": ["seatNumbers", "cinema", "showtime"],
+    "required": ["seat_number", "cinema", "showtime"],
     "additionalProperties": False
 }

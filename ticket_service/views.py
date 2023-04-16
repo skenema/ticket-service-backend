@@ -4,6 +4,22 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Tickets
 import datetime
+from django.core import serializers
+import json
+
+@api_view(['POST'])
+def create_ticket(request):
+    if request.method == "POST":
+        b = Tickets(seatNumber="test", cinema="test", showtime=datetime.datetime.now())
+        b.save()
+        data = {
+            "id": b.pk,
+            "seatNumber": b.seatNumber,
+            "cinema": b.cinema,
+            "showtime": b.showtime,
+            "validate": "test"
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_ticket(request):
@@ -18,7 +34,7 @@ def get_ticket(request):
                 'showtime': i.showtime
             }
             ticket_list.append(ticket)
-        return Response(data=ticket_list, status=200)
+        return Response(data=ticket_list, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def validate_ticket(request):
@@ -39,3 +55,14 @@ def validate_ticket(request):
         except Tickets.DoesNotExist:
             return Response({'Invalid': 'Ticket Invalid'}, status=status.HTTP_404_NOT_FOUND)
         return Response(data=ticket, status=status.HTTP_200_OK)
+
+# for develop
+@api_view(['DELETE'])
+def delete_ticket(request):
+    ticket_id = request.query_params.get('ticketid')
+    try:
+        ticket = Tickets.objects.get(id=ticket_id)
+        ticket.delete()
+        return Response(status=status.HTTP_200_OK)
+    except Tickets.DoesNotExist:
+        return Response({'Invalid': 'NOt found'}, status=status.HTTP_404_NOT_FOUND)

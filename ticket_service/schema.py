@@ -4,7 +4,7 @@ ticket_schema = {
         "title" : {"type": "string"},
         "seat_number" : {"type": "integer"}, 
         "cinema" : {"type": "string"}, 
-        "showtime" : {"type": "string"}
+        "showtime" : {"type": "string", "format": "date-time"}
     },
     "required": ["seat_number", "cinema", "showtime"],
     "additionalProperties": False

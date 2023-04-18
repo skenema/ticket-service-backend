@@ -2,7 +2,10 @@ ticket_schema = {
     "type": "object",
     "properties": {
         "title" : {"type": "string"},
-        "seat_number" : {"type": "integer"}, 
+        "seat_number" : {
+            "type": "array",
+            "items": {"type": "integer"}
+        }, 
         "cinema" : {"type": "string"}, 
         "showtime" : {"type": "string", "format": "date-time"}
     },

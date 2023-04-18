@@ -15,21 +15,21 @@ def create_ticket(request):
         try:
             data = json.loads(request.body.decode())
             jsonschema.validate(data, ticket_schema)
-            b = Tickets(title=data['title'], seat_number=data['seat_number'], cinema=data['cinema'],
-                        showtime=data['showtime'])
-            base_url = request.build_absolute_uri().split('/')
-            prefix_url = base_url[:-1]
-            b.save()
-            prefix_url.append(f'validate-ticket?ticketId={b.pk}')
-            valdiate_url = '/'.join(prefix_url)
-            data = {
-                "id": b.pk,
-                "seat_number": b.seat_number,
-                "cinema": b.cinema,
-                "showtime": b.showtime,
-                "validate_url": valdiate_url
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
+            seats_number = data['seat_number']
+            list_of_tickets = []
+            for i in seats_number:
+                b = Tickets(title=data['title'], seat_number=i, cinema=data['cinema'],
+                            showtime=data['showtime'])
+                b.save()
+                data = {
+                    "id": b.pk,
+                    "title": b.title,
+                    "seat_number": b.seat_number,
+                    "cinema": b.cinema,
+                    "showtime": b.showtime,
+                }
+                list_of_tickets.append(data)
+            return Response(data={ "tickets": list_of_tickets}, status=status.HTTP_200_OK)
         except json.JSONDecodeError:
             return Response({"error": "Invalid JSON format"}, status=status.HTTP_400_BAD_REQUEST)
         except jsonschema.exceptions.ValidationError as e:

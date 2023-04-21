@@ -2,3 +2,5 @@ django
 djangorestframework
 python-decouple
 django-cors-headers
+python-decouple
+jsonschema

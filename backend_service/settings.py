@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt',
     "ticket_service.apps.TicketServiceConfig"
 ]
 
@@ -131,7 +132,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 
 # JWT
 SIMPLE_JWT =  {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minute=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "SIGNING_KEY": config("SIGNING_KEY"),
 }
 

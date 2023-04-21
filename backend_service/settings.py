@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from decouple import config, Csv
 from pathlib import Path
 
@@ -127,6 +128,19 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOWED_ORIGIN_REGEXES = [
     'http://localhost:3000',
 ]
+
+# JWT
+SIMPLE_JWT =  {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minute=30),
+    "SIGNING_KEY": config("SIGNING_KEY"),
+}
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
+    )
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

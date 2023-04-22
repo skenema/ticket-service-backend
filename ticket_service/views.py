@@ -69,7 +69,7 @@ def validate_ticket(request):
                 }, status=status.HTTP_403_FORBIDDEN)
             ticket = {
                 'id': ticket.id,
-                'seatNumber': ticket.seatNumber,
+                'seatNumber': ticket.seat_number,
                 'cinema': ticket.cinema,
                 'showtime': ticket.showtime
             }
